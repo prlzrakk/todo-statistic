@@ -13,6 +13,9 @@ function getFiles() {
 
 function processCommand(command) {
     switch (command) {
+        case 'important':
+            extractImportantComments(files);
+            break;
         case 'exit':
             process.exit(0);
             break;
@@ -29,6 +32,16 @@ function extractComments(files) {
     for (const file of files) {
         for (const line of file.split('\n')) {
             if (line.startsWith('// TODO')) {
+                console.log(line);
+            }
+        }
+    }
+}
+
+function extractImportantComments(files) {
+    for (const file of files) {
+        for (const line of file.split('\n')) {
+            if (line.startsWith('// TODO') &&  line.includes('!')) {
                 console.log(line);
             }
         }
