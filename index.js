@@ -16,9 +16,22 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            extractComments(files);
+            break;
         default:
             console.log('wrong command');
             break;
+    }
+}
+
+function extractComments(files) {
+    for (const file of files) {
+        for (const line of file.split('\n')) {
+            if (line.startsWith('// TODO')) {
+                console.log(line);
+            }
+        }
     }
 }
 
