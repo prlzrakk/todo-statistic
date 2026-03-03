@@ -12,7 +12,12 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    const [commands, ...args] = command.split(' ');
+    switch (commands) {
+        case `user`:
+            const username = args[0];
+            extractCommentsByName(files, username);
+            break;
         case 'important':
             extractImportantComments(files);
             break;
@@ -41,11 +46,22 @@ function extractComments(files) {
 function extractImportantComments(files) {
     for (const file of files) {
         for (const line of file.split('\n')) {
-            if (line.startsWith('// TODO') &&  line.includes('!')) {
+            if (line.startsWith('// TODO') && line.includes('!')) {
                 console.log(line);
             }
         }
     }
 }
+
+function extractCommentsByName(files, name) {
+    for (const file of files) {
+        for (let line of file.split('\n')) {
+            if (line.startsWith('// TODO') && line.includes(name)) {
+                console.log(line);
+            }
+        }
+    }
+}
+
 
 // TODO you can do it!
