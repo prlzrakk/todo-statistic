@@ -14,12 +14,18 @@ function getFiles() {
 function processCommand(command) {
     const [commands, ...args] = command.split(' ');
     switch (commands) {
+        case 'sort':
+            const data = args[0];
+            switch(data) {
+                case 'importance':
+                    extractImportantComments(files, 'importance');
+            }
         case `user`:
             const username = args[0];
             extractCommentsByName(files, username);
             break;
         case 'important':
-            extractImportantComments(files);
+            extractImportantComments(files, 'show');
             break;
         case 'exit':
             process.exit(0);
@@ -43,13 +49,27 @@ function extractComments(files) {
     }
 }
 
-function extractImportantComments(files) {
+function extractImportantComments(files, command) {
+    const notImportantComments = [];
+    const importantComments = [];
     for (const file of files) {
         for (const line of file.split('\n')) {
-            if (line.startsWith('// TODO') && line.includes('!')) {
-                console.log(line);
+            if (line.startsWith('// TODO')) {
+                if (line.includes('!')) {
+                    importantComments.push(line);
+                } else {
+                    notImportantComments.push(line)
+                }
             }
         }
+    }
+    switch(command){
+        case 'importance':
+            console.log(importantComments);
+            console.log(notImportantComments)
+            break;
+        case 'show':
+            console.log(importantComments);
     }
 }
 
