@@ -18,7 +18,17 @@ function processCommand(command) {
             const data = args[0];
             switch(data) {
                 case 'importance':
-                    extractImportantComments(files, 'importance');
+                    showImportantComments(files);
+                    break;
+                case 'user':
+                    showCommentsByName(files);
+                    break;
+                case 'date':
+                    sortCommentsByDate(files);
+                    break;
+                    default:
+                        break;
+
             }
         case `user`:
             const username = args[0];
@@ -49,7 +59,17 @@ function extractComments(files) {
     }
 }
 
-function extractImportantComments(files, command) {
+function extractImportantComments(files) {
+    for (const file of files) {
+        for (const line of file.split('\n')) {
+            if (line.startsWith('// TODO') && line.includes('!')) {
+                console.log(line);
+            }
+        }
+    }
+}
+
+function showImportantComments(files) {
     const notImportantComments = [];
     const importantComments = [];
     for (const file of files) {
@@ -63,14 +83,8 @@ function extractImportantComments(files, command) {
             }
         }
     }
-    switch(command){
-        case 'importance':
-            console.log(importantComments);
-            console.log(notImportantComments)
-            break;
-        case 'show':
-            console.log(importantComments);
-    }
+    console.log(importantComments.join('\n'));
+    console.log(notImportantComments.join('\n'));
 }
 
 function extractCommentsByName(files, name) {
@@ -84,4 +98,45 @@ function extractCommentsByName(files, name) {
 }
 
 
-// TODO you can do it!
+function showCommentsByName(files) {
+    const namedComments = [];
+    const notNamedComments = [];
+    for (const file of files) {
+        for (let line of file.split('\n')) {
+            if (line.startsWith('// TODO')) {
+                const name = line.split(';')[0].slice(8).trim();
+                if (name != null) {
+                    namedComments.push(line);
+                } else {
+                    notNamedComments.push(line)
+                }
+            }
+        }
+    }
+    console.log(namedComments.join('\n'));
+    console.log(notNamedComments.join('\n'));
+}
+
+function sortCommentsByDate(files){
+    const datesArray = [];
+    const withoutDates = [];
+    for (const file of files) {
+        for (const line of file.split('\n')) {
+            if (line.startsWith('// TODO')) {
+                const dateMatch = /^\d{4}-\d{2}-\d{2}$/;
+                if (dateMatch) {
+                    const date = dateMatch[1];
+                    datesArray.push({line, date});
+                } else {
+                    withoutDates.push(line);
+                }
+            }
+        }
+    }
+    datesArray.sort((a,b) => new Date(b.date) - new Date(a.date));
+    const sortedDatesArray = [datesArray.map(item => item.line)];
+    console.log(sortedDatesArray.join('\n'));
+    console.log(withoutDates.join('\n'));
+}
+
+// TODO анекдот
